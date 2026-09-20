@@ -1,0 +1,311 @@
+{
+  "IN_JSL_001": {
+    "annual_forecast": [
+      {
+        "year": 2027,
+        "p50_kwh": 7399.9,
+        "p75_kwh": 6856.0,
+        "p90_kwh": 6434.4,
+        "ci_width_kwh": 1852.4,
+        "specific_yield_p50": 1245.8,
+        "cuf_pct_p50": 14.22
+      },
+      {
+        "year": 2028,
+        "p50_kwh": 7386.5,
+        "p75_kwh": 6894.6,
+        "p90_kwh": 6438.8,
+        "ci_width_kwh": 1855.1,
+        "specific_yield_p50": 1243.5,
+        "cuf_pct_p50": 14.2
+      },
+      {
+        "year": 2029,
+        "p50_kwh": 7326.4,
+        "p75_kwh": 6785.7,
+        "p90_kwh": 6309.4,
+        "ci_width_kwh": 1940.6,
+        "specific_yield_p50": 1233.4,
+        "cuf_pct_p50": 14.08
+      },
+      {
+        "year": 2030,
+        "p50_kwh": 7257.9,
+        "p75_kwh": 6808.2,
+        "p90_kwh": 6410.9,
+        "ci_width_kwh": 1792.0,
+        "specific_yield_p50": 1221.9,
+        "cuf_pct_p50": 13.95
+      },
+      {
+        "year": 2031,
+        "p50_kwh": 7252.0,
+        "p75_kwh": 6715.4,
+        "p90_kwh": 6225.1,
+        "ci_width_kwh": 1918.0,
+        "specific_yield_p50": 1220.9,
+        "cuf_pct_p50": 13.94
+      },
+      {
+        "year": 2032,
+        "p50_kwh": 7193.0,
+        "p75_kwh": 6748.0,
+        "p90_kwh": 6297.7,
+        "ci_width_kwh": 1836.6,
+        "specific_yield_p50": 1210.9,
+        "cuf_pct_p50": 13.82
+      },
+      {
+        "year": 2033,
+        "p50_kwh": 7192.1,
+        "p75_kwh": 6682.5,
+        "p90_kwh": 6251.8,
+        "ci_width_kwh": 1890.3,
+        "specific_yield_p50": 1210.8,
+        "cuf_pct_p50": 13.82
+      },
+      {
+        "year": 2034,
+        "p50_kwh": 7126.1,
+        "p75_kwh": 6683.9,
+        "p90_kwh": 6266.9,
+        "ci_width_kwh": 1786.2,
+        "specific_yield_p50": 1199.7,
+        "cuf_pct_p50": 13.69
+      },
+      {
+        "year": 2035,
+        "p50_kwh": 7129.8,
+        "p75_kwh": 6611.9,
+        "p90_kwh": 6223.5,
+        "ci_width_kwh": 1842.8,
+        "specific_yield_p50": 1200.3,
+        "cuf_pct_p50": 13.7
+      },
+      {
+        "year": 2036,
+        "p50_kwh": 7110.0,
+        "p75_kwh": 6574.3,
+        "p90_kwh": 6120.2,
+        "ci_width_kwh": 1953.7,
+        "specific_yield_p50": 1197.0,
+        "cuf_pct_p50": 13.66
+      }
+    ],
+    "summary": {
+      "total_10yr_mwh": 72.37,
+      "avg_annual_kwh": 7237.4,
+      "specific_yield_kwh_per_kwp": 1218.4,
+      "cuf_pct": 13.91,
+      "avg_annual_degradation_pct": 0.443,
+      "ci_width_first_year_kwh": 1852.4,
+      "ci_width_last_year_kwh": 1953.7
+    }
+  },
+  "IN_KOL_001": {
+    "annual_forecast": [
+      {
+        "year": 2027,
+        "p50_kwh": 5683.4,
+        "p75_kwh": 4940.2,
+        "p90_kwh": 4299.1,
+        "ci_width_kwh": 2679.0,
+        "specific_yield_p50": 956.8,
+        "cuf_pct_p50": 10.92
+      },
+      {
+        "year": 2028,
+        "p50_kwh": 5678.5,
+        "p75_kwh": 4999.0,
+        "p90_kwh": 4333.6,
+        "ci_width_kwh": 2698.2,
+        "specific_yield_p50": 956.0,
+        "cuf_pct_p50": 10.91
+      },
+      {
+        "year": 2029,
+        "p50_kwh": 5638.2,
+        "p75_kwh": 4866.7,
+        "p90_kwh": 4180.8,
+        "ci_width_kwh": 2768.4,
+        "specific_yield_p50": 949.2,
+        "cuf_pct_p50": 10.84
+      },
+      {
+        "year": 2030,
+        "p50_kwh": 5586.1,
+        "p75_kwh": 4937.7,
+        "p90_kwh": 4343.9,
+        "ci_width_kwh": 2596.8,
+        "specific_yield_p50": 940.4,
+        "cuf_pct_p50": 10.74
+      },
+      {
+        "year": 2031,
+        "p50_kwh": 5584.5,
+        "p75_kwh": 4766.3,
+        "p90_kwh": 4091.6,
+        "ci_width_kwh": 2772.2,
+        "specific_yield_p50": 940.2,
+        "cuf_pct_p50": 10.73
+      },
+      {
+        "year": 2032,
+        "p50_kwh": 5543.6,
+        "p75_kwh": 4879.1,
+        "p90_kwh": 4259.7,
+        "ci_width_kwh": 2655.2,
+        "specific_yield_p50": 933.3,
+        "cuf_pct_p50": 10.65
+      },
+      {
+        "year": 2033,
+        "p50_kwh": 5544.3,
+        "p75_kwh": 4834.0,
+        "p90_kwh": 4169.9,
+        "ci_width_kwh": 2770.7,
+        "specific_yield_p50": 933.4,
+        "cuf_pct_p50": 10.66
+      },
+      {
+        "year": 2034,
+        "p50_kwh": 5486.9,
+        "p75_kwh": 4846.7,
+        "p90_kwh": 4213.4,
+        "ci_width_kwh": 2613.0,
+        "specific_yield_p50": 923.7,
+        "cuf_pct_p50": 10.54
+      },
+      {
+        "year": 2035,
+        "p50_kwh": 5490.9,
+        "p75_kwh": 4744.4,
+        "p90_kwh": 4185.1,
+        "ci_width_kwh": 2674.7,
+        "specific_yield_p50": 924.4,
+        "cuf_pct_p50": 10.55
+      },
+      {
+        "year": 2036,
+        "p50_kwh": 5507.8,
+        "p75_kwh": 4717.9,
+        "p90_kwh": 4056.3,
+        "ci_width_kwh": 2811.5,
+        "specific_yield_p50": 927.2,
+        "cuf_pct_p50": 10.58
+      }
+    ],
+    "summary": {
+      "total_10yr_mwh": 55.74,
+      "avg_annual_kwh": 5574.4,
+      "specific_yield_kwh_per_kwp": 938.5,
+      "cuf_pct": 10.71,
+      "avg_annual_degradation_pct": 0.348,
+      "ci_width_first_year_kwh": 2679.0,
+      "ci_width_last_year_kwh": 2811.5
+    }
+  },
+  "IN_PUN_001": {
+    "annual_forecast": [
+      {
+        "year": 2027,
+        "p50_kwh": 6703.8,
+        "p75_kwh": 6029.6,
+        "p90_kwh": 5498.1,
+        "ci_width_kwh": 2293.5,
+        "specific_yield_p50": 1128.6,
+        "cuf_pct_p50": 12.88
+      },
+      {
+        "year": 2028,
+        "p50_kwh": 6697.8,
+        "p75_kwh": 6081.9,
+        "p90_kwh": 5526.7,
+        "ci_width_kwh": 2290.0,
+        "specific_yield_p50": 1127.6,
+        "cuf_pct_p50": 12.87
+      },
+      {
+        "year": 2029,
+        "p50_kwh": 6632.2,
+        "p75_kwh": 5959.1,
+        "p90_kwh": 5378.3,
+        "ci_width_kwh": 2403.3,
+        "specific_yield_p50": 1116.5,
+        "cuf_pct_p50": 12.75
+      },
+      {
+        "year": 2030,
+        "p50_kwh": 6565.2,
+        "p75_kwh": 6001.9,
+        "p90_kwh": 5508.5,
+        "ci_width_kwh": 2237.8,
+        "specific_yield_p50": 1105.2,
+        "cuf_pct_p50": 12.62
+      },
+      {
+        "year": 2031,
+        "p50_kwh": 6569.2,
+        "p75_kwh": 5897.8,
+        "p90_kwh": 5298.9,
+        "ci_width_kwh": 2367.7,
+        "specific_yield_p50": 1105.9,
+        "cuf_pct_p50": 12.62
+      },
+      {
+        "year": 2032,
+        "p50_kwh": 6506.9,
+        "p75_kwh": 5958.6,
+        "p90_kwh": 5402.6,
+        "ci_width_kwh": 2273.0,
+        "specific_yield_p50": 1095.4,
+        "cuf_pct_p50": 12.5
+      },
+      {
+        "year": 2033,
+        "p50_kwh": 6524.3,
+        "p75_kwh": 5886.2,
+        "p90_kwh": 5360.8,
+        "ci_width_kwh": 2328.0,
+        "specific_yield_p50": 1098.4,
+        "cuf_pct_p50": 12.54
+      },
+      {
+        "year": 2034,
+        "p50_kwh": 6455.0,
+        "p75_kwh": 5900.4,
+        "p90_kwh": 5381.1,
+        "ci_width_kwh": 2218.2,
+        "specific_yield_p50": 1086.7,
+        "cuf_pct_p50": 12.41
+      },
+      {
+        "year": 2035,
+        "p50_kwh": 6470.0,
+        "p75_kwh": 5819.5,
+        "p90_kwh": 5358.0,
+        "ci_width_kwh": 2269.5,
+        "specific_yield_p50": 1089.2,
+        "cuf_pct_p50": 12.43
+      },
+      {
+        "year": 2036,
+        "p50_kwh": 6447.4,
+        "p75_kwh": 5793.8,
+        "p90_kwh": 5220.6,
+        "ci_width_kwh": 2416.3,
+        "specific_yield_p50": 1085.4,
+        "cuf_pct_p50": 12.39
+      }
+    ],
+    "summary": {
+      "total_10yr_mwh": 65.57,
+      "avg_annual_kwh": 6557.2,
+      "specific_yield_kwh_per_kwp": 1103.9,
+      "cuf_pct": 12.6,
+      "avg_annual_degradation_pct": 0.432,
+      "ci_width_first_year_kwh": 2293.5,
+      "ci_width_last_year_kwh": 2416.3
+    }
+  }
+}

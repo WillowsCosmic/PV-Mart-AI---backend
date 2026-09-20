@@ -48,10 +48,29 @@ mlruns.db
 mlflow.db
 mlartifacts/
 
-# Data & models (large/binary artifacts)
-data/
-*.csv
-*.parquet
+# Data & models (large/binary artifacts) -- only exclude the raw/intermediate
+# pipeline stages (hourly weather data, per-hour features/losses/physics).
+# The final pre-computed forecast outputs used by forecast_api.py ARE
+# committed on purpose -- Render's free tier has ephemeral disk, so these
+# files must live in the repo for the deployed API to have anything to
+# serve. See README deployment notes.
+#
+# Required, committed data files (do NOT ignore these):
+#   data/forecasts_all_locations.json
+#   data/champion_decisions_m8.csv
+#   data/scoreboard_m7_folds.csv
+#   data/horizon_error_curve_final.csv   <- loaded at import time; missing
+#                                            this crashes the app on startup
+data/parquet/
+data/features/
+data/losses/
+data/physics/
+data/monthly/
+data/scoreboard_m6.csv
+data/scoreboard_m7_longhorizon.csv
+data/horizon_error_curve.csv
+data/horizon_error_detail.csv
+data/forecasts_new_locations.json
 *.pkl
 *.joblib
 *.h5
@@ -85,4 +104,3 @@ Thumbs.db
 
 # Misc
 .cache/
-htmlcov/
