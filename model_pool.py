@@ -19,7 +19,6 @@ Metrics (spec Section 12): R2, MAE, RMSE, nRMSE, sMAPE
 import warnings
 import numpy as np
 import pandas as pd
-import mlflow
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
@@ -169,6 +168,7 @@ def run_candidate_pool_for_location(site: dict) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
+    import mlflow
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment(MLFLOW_EXPERIMENT)
 
