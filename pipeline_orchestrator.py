@@ -18,6 +18,7 @@ Run standalone for testing:
 """
 
 import glob
+import os
 import hashlib
 import warnings
 import numpy as np
@@ -197,6 +198,7 @@ def aggregate_monthly(location_id: str) -> pd.DataFrame:
         rows.append(grouped)
     monthly = pd.concat(rows, ignore_index=True).rename(columns={"P_physical_kWh": "PV_energy_kWh"})
     monthly = monthly.sort_values(["year", "month"]).reset_index(drop=True)
+    os.makedirs("data/monthly", exist_ok=True)
     monthly.to_parquet(f"data/monthly/{location_id}_monthly.parquet", index=False)
     return monthly
 
