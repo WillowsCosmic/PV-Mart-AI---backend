@@ -1,20 +1,32 @@
 """
-Backend Phase 2 — FastAPI service, now supporting ANY location.
+FastAPI service -- Render-deployable version.
 
-Behavior:
-  - Coordinates matching one of the 3 known pilot sites -> instant response
-    (pre-computed, same as before).
-  - Coordinates matching a previously-processed NEW location -> instant
-    response (cached from a prior run).
-  - A genuinely new coordinate -> kicks off the full pipeline as a
-    background job, returns 202 with a job_id immediately. Frontend polls
-    GET /v1/forecast/status/{job_id} until it's done (several minutes).
+Portability changes from the local-dev version:
+  - Data directory, CORS origins, and port all come from environment
+    variables (with local-dev defaults), so moving to a different host
+    later (a VM, Railway, Fly) is a config change, not a code change.
+  - Added GET /health -- a cheap, dependency-free endpoint for the
+    external cron ping (cron-job.org etc.) that keeps Render's free
+    tier from spinning down.
 
-Run:
+KNOWN LIMITATION (Render free tier specifically): disk storage is
+ephemeral. Files under DATA_DIR that exist at deploy time (committed to
+git) persist across restarts. Files WRITTEN at runtime (new-location
+job results, freshly-ingested Parquet) do NOT survive a restart. This
+means the async "any new location" pipeline works within one continuous
+uptime window, but its cache resets whenever Render restarts the
+service. Fine for a pre-launch demo; revisit (persistent disk, S3, or a
+real VM) before relying on this for real users repeatedly requesting
+the same new location.
+
+Run locally:
     uvicorn forecast_api:app --reload --port 8000
+
+Run on Render: see render deployment notes in README.
 """
 
 import json
+import os
 import uuid
 import asyncio
 from pathlib import Path
@@ -28,8 +40,21 @@ from pydantic import BaseModel, Field
 from pipeline_orchestrator import make_location_id, run_full_pipeline_for_new_site
 from products_config import find_by_model, PANELS, INVERTERS, BATTERIES
 
-FORECASTS_PATH = Path("data/forecasts_all_locations.json")
-NEW_LOCATIONS_CACHE_PATH = Path("data/forecasts_new_locations.json")
+# --- Config, all overridable via environment variables ----------------------
+
+DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
+FORECASTS_PATH = DATA_DIR / "forecasts_all_locations.json"
+NEW_LOCATIONS_CACHE_PATH = DATA_DIR / "forecasts_new_locations.json"
+
+# Comma-separated list, e.g. "https://your-frontend.vercel.app,http://localhost:5174"
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "ALLOWED_ORIGINS",
+        "http://localhost:5173,http://localhost:3000,http://localhost:5174",
+    ).split(",")
+    if origin.strip()
+]
 
 PILOT_COORDINATES = {
     "IN_JSL_001": (26.9157, 70.9083),
@@ -37,19 +62,19 @@ PILOT_COORDINATES = {
     "IN_PUN_001": (18.5204, 73.8567),
 }
 
-app = FastAPI(title="PV Mart AI Forecasting Engine", version="0.2.0-any-location")
+app = FastAPI(title="PV Mart AI Forecasting Engine", version="0.2.1-render")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://localhost:5174"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
 )
 
-# In-memory job store. NOTE: this resets if the server restarts -- fine
-# for a single-instance pilot deployment. A real production version
-# would persist this in TimescaleDB or use Celery+Redis so jobs survive
-# restarts and work across multiple server instances.
+# In-memory job store. Resets on restart -- same caveat as the data cache
+# above, same reasoning (Render free tier has no persistent process
+# memory across restarts either). A real production version would move
+# this to a database or Redis so jobs survive restarts.
 job_store: dict[str, dict] = {}
 
 
@@ -96,8 +121,6 @@ def save_to_new_location_cache(location_id: str, result: dict) -> None:
 
 
 def resolve_product(product_input: dict, catalog: list) -> dict:
-    """Accepts either a full product spec dict, or {"model": "..."} to
-    look up from the real product catalog."""
     if product_input and set(product_input.keys()) == {"model"}:
         return find_by_model(catalog, product_input["model"])
     return product_input
@@ -106,7 +129,7 @@ def resolve_product(product_input: dict, catalog: list) -> dict:
 def get_pilot_champion_model(location_id: str) -> str:
     try:
         import pandas as pd
-        decisions = pd.read_csv("data/champion_decisions_m8.csv")
+        decisions = pd.read_csv(DATA_DIR / "champion_decisions_m8.csv")
         row = decisions[decisions["location_id"] == location_id]
         if not row.empty:
             return row.iloc[0]["champion_model"]
@@ -118,7 +141,7 @@ def get_pilot_champion_model(location_id: str) -> str:
 def get_pilot_scoreboard(location_id: str) -> list:
     try:
         import pandas as pd
-        scoreboard = pd.read_csv("data/scoreboard_m7_folds.csv")
+        scoreboard = pd.read_csv(DATA_DIR / "scoreboard_m7_folds.csv")
         subset = scoreboard[scoreboard["location_id"] == location_id]
         avg = subset.groupby("model")[["nrmse", "smape", "r2"]].mean().reset_index()
         return avg.round(4).to_dict(orient="records")
@@ -164,11 +187,17 @@ def root():
     }
 
 
+@app.get("/health")
+def health():
+    """Cheap, dependency-free endpoint for the external cron keep-alive
+    ping. Does not touch disk or any pipeline logic."""
+    return {"status": "ok"}
+
+
 @app.post("/v1/forecast")
 async def forecast(request: ForecastRequest):
     latitude, longitude = request.site.latitude, request.site.longitude
 
-    # 1. Known pilot site -> instant, pre-computed response
     pilot_id = find_nearest_pilot_location(latitude, longitude)
     if pilot_id:
         all_forecasts = load_json_cache(FORECASTS_PATH)
@@ -178,13 +207,11 @@ async def forecast(request: ForecastRequest):
             pilot_result["scoreboard"] = get_pilot_scoreboard(pilot_id)
             return shape_response(pilot_result)
 
-    # 2. Previously-processed new location -> instant, cached response
     location_id = make_location_id(latitude, longitude)
     new_cache = load_json_cache(NEW_LOCATIONS_CACHE_PATH)
     if location_id in new_cache:
         return shape_response(new_cache[location_id])
 
-    # 3. Already running for this location -> point at the existing job
     existing_job = find_running_job_for_location(location_id)
     if existing_job:
         return JSONResponse(status_code=202, content={
@@ -193,7 +220,6 @@ async def forecast(request: ForecastRequest):
             "check_status_url": f"/v1/forecast/status/{existing_job}",
         })
 
-    # 4. Genuinely new location -> resolve products, kick off background job
     panel = resolve_product(request.system.panel, PANELS)
     inverter = resolve_product(request.system.inverter, INVERTERS)
     battery = resolve_product(request.system.battery, BATTERIES) if request.system.battery else None

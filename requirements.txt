@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pandas
+pyarrow
+httpx
+pvlib
+scikit-learn
+xgboost
+lightgbm
+statsmodels
+numpy
