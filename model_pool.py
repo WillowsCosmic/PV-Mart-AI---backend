@@ -25,6 +25,7 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 import xgboost as xgb
 import lightgbm as lgb
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 from site_configs import PILOT_SITES
 
@@ -46,17 +47,21 @@ def load_monthly(location_id: str) -> pd.DataFrame:
 
 def add_lag_features(df: pd.DataFrame) -> pd.DataFrame:
     """Only uses the target's OWN history + calendar position -- no raw
-    weather columns (GHI/POA/temperature) as inputs. Those are near-
-    deterministic transforms of PV_energy_kWh itself (Stage 5's formula),
-    and more importantly, a real 10-year-ahead forecast would never have
-    genuine future weather values to feed in. This keeps the model
-    honestly limited to what a real forecast run would actually have
-    access to."""
+    weather columns (GHI/POA/temperature) as inputs. Richer feature set:
+    more lags, more rolling windows, and a second seasonal harmonic --
+    India's solar output is often bimodal (pre/post monsoon), which a
+    single sin/cos pair per period doesn't capture well."""
     df = df.copy()
     df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
     df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
+    df["month_sin2"] = np.sin(4 * np.pi * df["month"] / 12)
+    df["month_cos2"] = np.cos(4 * np.pi * df["month"] / 12)
     df["lag_1"] = df[TARGET_COLUMN].shift(1)
-    df["lag_12"] = df[TARGET_COLUMN].shift(12)  
+    df["lag_2"] = df[TARGET_COLUMN].shift(2)
+    df["lag_3"] = df[TARGET_COLUMN].shift(3)
+    df["lag_12"] = df[TARGET_COLUMN].shift(12)
+    df["rolling_mean_3"] = df[TARGET_COLUMN].shift(1).rolling(window=3).mean()
+    df["rolling_mean_6"] = df[TARGET_COLUMN].shift(1).rolling(window=6).mean()
     df["rolling_mean_12"] = df[TARGET_COLUMN].shift(1).rolling(window=12).mean()
     return df.dropna().reset_index(drop=True)
 
@@ -77,7 +82,11 @@ def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     return {"r2": r2, "mae": mae, "rmse": rmse, "nrmse": nrmse, "smape": smape}
 
 
-FEATURE_COLUMNS = ["month_sin", "month_cos", "lag_1", "lag_12", "rolling_mean_12"]
+FEATURE_COLUMNS = [
+    "month_sin", "month_cos", "month_sin2", "month_cos2",
+    "lag_1", "lag_2", "lag_3", "lag_12",
+    "rolling_mean_3", "rolling_mean_6", "rolling_mean_12",
+]
 
 
 def train_persistence(train, test):
@@ -92,19 +101,20 @@ def train_linear_regression(train, test):
 
 
 def train_random_forest(train, test):
-    model = RandomForestRegressor(n_estimators=200, max_depth=5, random_state=42)
+    model = RandomForestRegressor(n_estimators=300, max_depth=6, min_samples_leaf=2, random_state=42)
     model.fit(train[FEATURE_COLUMNS], train[TARGET_COLUMN])
     return model.predict(test[FEATURE_COLUMNS])
 
 
 def train_xgboost(train, test):
-    model = xgb.XGBRegressor(n_estimators=200, max_depth=3, learning_rate=0.05, random_state=42)
+    model = xgb.XGBRegressor(n_estimators=300, max_depth=3, learning_rate=0.03, subsample=0.8, colsample_bytree=0.8, random_state=42)
     model.fit(train[FEATURE_COLUMNS], train[TARGET_COLUMN])
     return model.predict(test[FEATURE_COLUMNS])
 
 
 def train_lightgbm(train, test):
-    model = lgb.LGBMRegressor(n_estimators=200, max_depth=3, learning_rate=0.05,
+    model = lgb.LGBMRegressor(n_estimators=300, max_depth=3, learning_rate=0.03,
+                                subsample=0.8, colsample_bytree=0.8,
                                 random_state=42, verbose=-1)
     model.fit(train[FEATURE_COLUMNS], train[TARGET_COLUMN])
     return model.predict(test[FEATURE_COLUMNS])
@@ -121,6 +131,21 @@ def train_sarima(train, test):
     return forecast.values
 
 
+def train_ets(train, test):
+    """ETS (Exponential Smoothing) -- Section 8.1's other named statistical
+    candidate alongside SARIMA. Same input (just the raw target sequence),
+    different underlying decomposition (level/trend/seasonal smoothing
+    rather than ARIMA's autoregressive structure) -- sometimes wins on
+    shorter, cleaner seasonal series."""
+    series = train.set_index(pd.PeriodIndex(
+        train["year"].astype(str) + "-" + train["month"].astype(str), freq="M"
+    ))[TARGET_COLUMN]
+    model = ExponentialSmoothing(series, trend="add", seasonal="add", seasonal_periods=12)
+    fit = model.fit()
+    forecast = fit.forecast(steps=len(test))
+    return forecast.values
+
+
 CANDIDATES = {
     "Persistence": train_persistence,
     "LinearRegression": train_linear_regression,
@@ -128,6 +153,7 @@ CANDIDATES = {
     "XGBoost": train_xgboost,
     "LightGBM": train_lightgbm,
     "SARIMA": train_sarima,
+    "ETS": train_ets,
 }
 
 
