@@ -153,11 +153,22 @@ if __name__ == "__main__":
             .rename(columns={"PV_energy_kWh": "avg_kwh"})
             .to_dict(orient="records")
         )
+        # Full series (all years x 12 months) -- used for the complete
+        # export table, as opposed to historical_monthly_avg's 12-row
+        # compact chart data.
+        historical_monthly_full = (
+            monthly_df[["year", "month", "PV_energy_kWh"]]
+            .sort_values(["year", "month"])
+            .round(1)
+            .rename(columns={"PV_energy_kWh": "kwh"})
+            .to_dict(orient="records")
+        )
 
         all_outputs[location_id] = {
             "annual_forecast": forecast_df.to_dict(orient="records"),
             "summary": summary,
             "historical_monthly_avg": historical_monthly_avg,
+            "historical_monthly_full": historical_monthly_full,
         }
 
     with open(f"{OUTPUT_DIR}/forecasts_all_locations.json", "w") as f:
