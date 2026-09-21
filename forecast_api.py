@@ -154,6 +154,7 @@ def shape_response(result: dict) -> dict:
         "champion_model": result["champion_model"],
         "scoreboard": result["scoreboard"],
         "annual_forecast": result["annual_forecast"],
+        "historical_monthly_avg": result.get("historical_monthly_avg", []),
         "summary": result["summary"],
     }
 

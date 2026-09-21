@@ -294,11 +294,19 @@ async def run_full_pipeline_for_new_site(site: dict, system: dict) -> dict:
     total_10yr_kwh = forecast_df["p50_kwh"].sum()
     avg_annual = forecast_df["p50_kwh"].mean()
 
+    historical_monthly_avg = (
+        monthly_df.groupby("month")["PV_energy_kWh"]
+        .mean().round(1).reset_index()
+        .rename(columns={"PV_energy_kWh": "avg_kwh"})
+        .to_dict(orient="records")
+    )
+
     return {
         "location_id": location_id,
         "champion_model": champion_decision["champion_model"],
         "scoreboard": scoreboard_df.round(4).to_dict(orient="records"),
         "annual_forecast": forecast_df.to_dict(orient="records"),
+        "historical_monthly_avg": historical_monthly_avg,
         "summary": {
             "total_10yr_mwh": round(total_10yr_kwh / 1000, 2),
             "avg_annual_kwh": round(avg_annual, 1),

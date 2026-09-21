@@ -100,7 +100,57 @@
       "avg_annual_degradation_pct": 0.443,
       "ci_width_first_year_kwh": 1852.4,
       "ci_width_last_year_kwh": 1953.7
-    }
+    },
+    "historical_monthly_avg": [
+      {
+        "month": 1,
+        "avg_kwh": 517.5
+      },
+      {
+        "month": 2,
+        "avg_kwh": 546.5
+      },
+      {
+        "month": 3,
+        "avg_kwh": 679.9
+      },
+      {
+        "month": 4,
+        "avg_kwh": 706.6
+      },
+      {
+        "month": 5,
+        "avg_kwh": 740.6
+      },
+      {
+        "month": 6,
+        "avg_kwh": 692.2
+      },
+      {
+        "month": 7,
+        "avg_kwh": 658.7
+      },
+      {
+        "month": 8,
+        "avg_kwh": 640.6
+      },
+      {
+        "month": 9,
+        "avg_kwh": 624.2
+      },
+      {
+        "month": 10,
+        "avg_kwh": 597.7
+      },
+      {
+        "month": 11,
+        "avg_kwh": 497.4
+      },
+      {
+        "month": 12,
+        "avg_kwh": 489.2
+      }
+    ]
   },
   "IN_KOL_001": {
     "annual_forecast": [
@@ -203,7 +253,57 @@
       "avg_annual_degradation_pct": 0.348,
       "ci_width_first_year_kwh": 2679.0,
       "ci_width_last_year_kwh": 2811.5
-    }
+    },
+    "historical_monthly_avg": [
+      {
+        "month": 1,
+        "avg_kwh": 394.2
+      },
+      {
+        "month": 2,
+        "avg_kwh": 427.4
+      },
+      {
+        "month": 3,
+        "avg_kwh": 520.1
+      },
+      {
+        "month": 4,
+        "avg_kwh": 545.5
+      },
+      {
+        "month": 5,
+        "avg_kwh": 575.2
+      },
+      {
+        "month": 6,
+        "avg_kwh": 498.1
+      },
+      {
+        "month": 7,
+        "avg_kwh": 499.6
+      },
+      {
+        "month": 8,
+        "avg_kwh": 494.0
+      },
+      {
+        "month": 9,
+        "avg_kwh": 475.7
+      },
+      {
+        "month": 10,
+        "avg_kwh": 458.9
+      },
+      {
+        "month": 11,
+        "avg_kwh": 414.3
+      },
+      {
+        "month": 12,
+        "avg_kwh": 378.9
+      }
+    ]
   },
   "IN_PUN_001": {
     "annual_forecast": [
@@ -306,6 +406,56 @@
       "avg_annual_degradation_pct": 0.432,
       "ci_width_first_year_kwh": 2293.5,
       "ci_width_last_year_kwh": 2416.3
-    }
+    },
+    "historical_monthly_avg": [
+      {
+        "month": 1,
+        "avg_kwh": 582.7
+      },
+      {
+        "month": 2,
+        "avg_kwh": 595.5
+      },
+      {
+        "month": 3,
+        "avg_kwh": 694.4
+      },
+      {
+        "month": 4,
+        "avg_kwh": 703.4
+      },
+      {
+        "month": 5,
+        "avg_kwh": 708.8
+      },
+      {
+        "month": 6,
+        "avg_kwh": 492.0
+      },
+      {
+        "month": 7,
+        "avg_kwh": 377.4
+      },
+      {
+        "month": 8,
+        "avg_kwh": 393.5
+      },
+      {
+        "month": 9,
+        "avg_kwh": 463.9
+      },
+      {
+        "month": 10,
+        "avg_kwh": 576.3
+      },
+      {
+        "month": 11,
+        "avg_kwh": 551.7
+      },
+      {
+        "month": 12,
+        "avg_kwh": 551.0
+      }
+    ]
   }
 }

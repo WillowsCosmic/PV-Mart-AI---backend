@@ -146,9 +146,18 @@ if __name__ == "__main__":
 
         forecast_df.to_csv(f"{OUTPUT_DIR}/forecast_{location_id}.csv", index=False)
 
+        monthly_df = load_monthly(location_id)
+        historical_monthly_avg = (
+            monthly_df.groupby("month")["PV_energy_kWh"]
+            .mean().round(1).reset_index()
+            .rename(columns={"PV_energy_kWh": "avg_kwh"})
+            .to_dict(orient="records")
+        )
+
         all_outputs[location_id] = {
             "annual_forecast": forecast_df.to_dict(orient="records"),
             "summary": summary,
+            "historical_monthly_avg": historical_monthly_avg,
         }
 
     with open(f"{OUTPUT_DIR}/forecasts_all_locations.json", "w") as f:
